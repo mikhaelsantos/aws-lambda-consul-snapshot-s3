@@ -1,7 +1,7 @@
 # AWS Lambda function to backup Consul Snapshots to S3 (Snapper)
 
 ### Description
-Snapper is an AWS Lambda Function that through the [Consul API] (https://www.consul.io/api/snapshot.html) downloads a Consul Snapshot which includes all state managed by Consul's Raft consensus protocol and stores it in S3
+Snapper is an AWS Lambda Function that through the [Consul API](https://www.consul.io/api/snapshot.html) downloads a Consul Snapshot which includes all state managed by Consul's Raft consensus protocol and stores it in S3
 
 TLDR; AWS Lambda Function that makes backups of Consul snapshots and stores them in S3.
 
