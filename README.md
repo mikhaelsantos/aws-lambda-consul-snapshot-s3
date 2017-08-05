@@ -19,7 +19,9 @@ TLDR; AWS Lambda Function that makes backups of Consul snapshots and stores them
 ### Workflow
  
  1- Get Consul token
+ 
  2- Download Snapshot
+ 
  3- Upload Snapshot to S3
 
 ### Maintainers
