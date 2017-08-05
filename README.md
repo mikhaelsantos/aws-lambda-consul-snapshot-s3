@@ -5,7 +5,7 @@ Snapper is an AWS Lambda Function that through the [Consul API] (https://www.con
 
 TLDR; AWS Lambda Function that makes backups of Consul snapshots and stores them in S3.
 
-***Supports:**
+**Supports:**
 
 * SSL
 * Encrytion context for decrypting Consul ACL Token
@@ -16,6 +16,11 @@ TLDR; AWS Lambda Function that makes backups of Consul snapshots and stores them
  * Python 3.6
  * Boto
  
- ### Dependencies
+### Workflow
  
- TODO
+ 1- Get Consul token
+ 2- Download Snapshot
+ 3- Upload Snapshot to S3
+
+### Maintainers
+Mikhael Santos
