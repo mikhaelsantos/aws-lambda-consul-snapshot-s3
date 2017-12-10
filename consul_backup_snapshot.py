@@ -18,11 +18,10 @@ CHUNK_NAME_PREFIX = "snapshot_chunk_"
 CHUNK_SIZE = 4000
 
 
-def split_chunks(file_name, bucket, path, key):
+def split_chunks(file_name, key, encryption_context):
     """
     :param file_name: (str) File name to split
-    :param bucket: (str) bucket to where get encryption context
-    :param path: (str) path for encryption context
+    :param encryption_context: (dict) encryption context
     :return: (dict) with the token
     """
 
@@ -39,8 +38,7 @@ def split_chunks(file_name, bucket, path, key):
             response = client.encrypt(
                 KeyId=key,
                 Plaintext=chunk,
-                EncryptionContext={"AppName": "consul-backup",
-                                   "BucketPath": os.path.join(bucket, path)}
+                EncryptionContext=encryption_context
             )
             with open(FULL_PATH + chunk_dir + "/" + chunk_name, 'wb') as outfile:
                 outfile.write(response["CiphertextBlob"])
@@ -48,11 +46,12 @@ def split_chunks(file_name, bucket, path, key):
     return chunk_dir
 
 
-def get_token(bucket, path):
+def get_token(bucket, path, encryption_context):
     """
 
     :param bucket: (str) Configuration Bucket
     :param path:  (str) Path to encrypted configuration file
+    :param encryption_context: (dict) encryption context
     :return: (bytes) Consul Token
     """
     client = boto3.resource("s3")
@@ -61,8 +60,7 @@ def get_token(bucket, path):
     client = boto3.client("kms")
     with open(FULL_PATH + "secrets.enc", "rb") as file:
         response = client.decrypt(CiphertextBlob=file.read(),
-                                  EncryptionContext={"AppName": "consul-backup",
-                                                     "BucketPath": os.path.join(bucket, path)}
+                                  EncryptionContext=encryption_context
                                   )
 
     return json.loads(response["Plaintext"])
@@ -145,7 +143,7 @@ def aws_lambda_handler(*args, **kwargs):
     headers = {"X-Consul-Token": config["token"]}
     print("Download Snapshot")
     file_name = download_snapshot(url, headers)
-    chunk_dir = split_chunks(file_name, backup_bucket, backup_path, key)
+    chunk_dir = split_chunks(file_name, key)
     print("Upload chunks to s3")
     upload_chunks(chunk_dir, backup_path, backup_bucket)
     print("Execution Successful")
